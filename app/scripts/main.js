@@ -16,27 +16,49 @@
  *  limitations under the License
  *
  */
-/* eslint-env browser */
-(function() {
+(function () {
   'use strict';
+
+  var querySelector = document.querySelector.bind(document);
+
+  var navdrawerContainer = querySelector('.navdrawer-container');
+  var body = document.body;
+  var appbarElement = querySelector('.app-bar');
+  var menuBtn = querySelector('.menu');
+  var main = querySelector('main');
+
+  function closeMenu() {
+    body.classList.remove('open');
+    appbarElement.classList.remove('open');
+    navdrawerContainer.classList.remove('open');
+  }
+
+  function toggleMenu() {
+    body.classList.toggle('open');
+    appbarElement.classList.toggle('open');
+    navdrawerContainer.classList.toggle('open');
+    navdrawerContainer.classList.add('opened');
+  }
+
+  main.addEventListener('click', closeMenu);
+  menuBtn.addEventListener('click', toggleMenu);
+  navdrawerContainer.addEventListener('click', function (event) {
+    if (event.target.nodeName === 'A' || event.target.nodeName === 'LI') {
+      closeMenu();
+    }
+  });
 
   // Check to make sure service workers are supported in the current browser,
   // and that the current page is accessed from a secure origin. Using a
   // service worker from an insecure origin will trigger JS console errors. See
   // http://www.chromium.org/Home/chromium-security/prefer-secure-origins-for-powerful-new-features
-  var isLocalhost = Boolean(window.location.hostname === 'localhost' ||
-      // [::1] is the IPv6 localhost address.
-      window.location.hostname === '[::1]' ||
-      // 127.0.0.1/8 is considered localhost for IPv4.
-      window.location.hostname.match(
-        /^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/
-      )
-    );
-
   if ('serviceWorker' in navigator &&
-      (window.location.protocol === 'https:' || isLocalhost)) {
-    navigator.serviceWorker.register('service-worker.js')
-    .then(function(registration) {
+      (window.location.protocol === 'https:' ||
+       window.location.hostname === 'localhost' ||
+       window.location.hostname.indexOf('127.') === 0)) {
+    navigator.serviceWorker.register('/service-worker.js', {
+      scope: './'
+    }).then(function(registration) {
       // Check to see if there's an updated version of service-worker.js with
       // new files to cache:
       // https://slightlyoff.github.io/ServiceWorker/spec/service_worker/index.html#service-worker-registration-update-method
@@ -45,7 +67,7 @@
       }
 
       // updatefound is fired if service-worker.js changes.
-      registration.onupdatefound = function() {
+      registration.onupdatefound = function () {
         // updatefound is also fired the very first time the SW is installed,
         // and there's no need to prompt for a reload at that point.
         // So check here to see if the page is already controlled,
@@ -55,7 +77,7 @@
           // https://slightlyoff.github.io/ServiceWorker/spec/service_worker/index.html#service-worker-container-updatefound-event
           var installingWorker = registration.installing;
 
-          installingWorker.onstatechange = function() {
+          installingWorker.onstatechange = function () {
             switch (installingWorker.state) {
               case 'installed':
                 // At this point, the old content will have been purged and the
@@ -65,16 +87,12 @@
                 break;
 
               case 'redundant':
-                throw new Error('The installing ' +
-                                'service worker became redundant.');
-
-              default:
-                // Ignore
+                throw new Error('The installing service worker became redundant.');
             }
           };
         }
       };
-    }).catch(function(e) {
+    }).catch(function (e) {
       console.error('Error during service worker registration:', e);
     });
   }
