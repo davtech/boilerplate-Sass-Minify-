@@ -24,6 +24,7 @@ var gulp = require('gulp');
 var $ = require('gulp-load-plugins')();
 var del = require('del');
 var runSequence = require('run-sequence');
+var connect = require('gulp-connect-php'),
 var browserSync = require('browser-sync');
 var pagespeed = require('psi');
 var reload = browserSync.reload;
@@ -157,16 +158,20 @@ gulp.task('clean', del.bind(null, ['.tmp', 'dist/*', '!dist/.git'], {dot: true})
 
 // Watch files for changes & reload
 gulp.task('serve', ['styles'], function () {
-  browserSync({
-    notify: false,
-    // Customize the BrowserSync console logging prefix
-    logPrefix: 'WSK',
-    // Run as an https by uncommenting 'https: true'
-    // Note: this uses an unsigned certificate which on first access
-    //       will present a certificate warning in the browser.
-    // https: true,
-    server: ['.tmp', 'app']
-  });
+  
+  // connect.server({}, function (){
+    browserSync({
+      notify: false,
+      // Customize the BrowserSync console logging prefix
+      logPrefix: 'WSK',
+      // Run as an https by uncommenting 'https: true'
+      // Note: this uses an unsigned certificate which on first access
+      //       will present a certificate warning in the browser.
+      // https: true,
+      server: ['.tmp', 'app']
+    });
+  // });
+
 
   gulp.watch(['app/**/*.html'], reload);
   gulp.watch(['app/styles/**/*.{scss,css}'], ['styles', reload]);
