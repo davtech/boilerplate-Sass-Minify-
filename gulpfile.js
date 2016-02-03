@@ -24,10 +24,10 @@ var gulp = require('gulp');
 var $ = require('gulp-load-plugins')();
 var del = require('del');
 var runSequence = require('run-sequence');
-var connect = require('gulp-connect-php'),
-var browserSync = require('browser-sync');
+// var connect = require('gulp-connect-php');
+// var browserSync = require('browser-sync');
 var pagespeed = require('psi');
-var reload = browserSync.reload;
+// var reload = browserSync.reload;
 var swPrecache = require('sw-precache');
 var fs = require('fs');
 var path = require('path');
@@ -36,10 +36,11 @@ var packageJson = require('./package.json');
 // Lint JavaScript
 gulp.task('jshint', function () {
   return gulp.src('app/scripts/**/*.js')
-    .pipe(reload({stream: true, once: true}))
+    // .pipe(reload({stream: true, once: true}))
     .pipe($.jshint())
     .pipe($.jshint.reporter('jshint-stylish'))
-    .pipe($.if(!browserSync.active, $.jshint.reporter('fail')));
+    // .pipe($.if(!browserSync.active, $.jshint.reporter('fail')));
+    // .pipe($.if(!browserSync.active, $.jshint.reporter('fail')));
 });
 
 // Optimize images
@@ -92,20 +93,23 @@ gulp.task('styles', function () {
 
   // For best performance, don't add Sass partials to `gulp.src`
   return gulp.src([
-    // 'app/**/*.scss'
-    'app/scss/**/*.scss'
+    // 'app/**/*.scss',
+    'app/scss/**/*.scss',
+    // 'app/scss/*.scss',
+    // 'app/scss/**/*.scss'    
   ])
-    .pipe($.changed('app/styles', {extension: '.css'}))
+    .pipe($.changed('.tmp/styles', {extension: '.css'}))
     .pipe($.sourcemaps.init())
     .pipe($.sass({
       precision: 10
     }).on('error', $.sass.logError))
     .pipe($.autoprefixer(AUTOPREFIXER_BROWSERS))
+    // .pipe(rename('styles'))
     .pipe(gulp.dest('app/styles'))
     // Concatenate and minify styles
     .pipe($.if('*.css', $.csso()))
     .pipe($.sourcemaps.write())
-    .pipe(gulp.dest('dist'))
+    .pipe(gulp.dest('dist/styles'))
     .pipe($.size({title: 'styles'}));
 })
 
@@ -154,43 +158,16 @@ gulp.task('html', function () {
 });
 
 // Clean output directory
-gulp.task('clean', del.bind(null, ['.tmp', 'dist/*', '!dist/.git'], {dot: true}));
+gulp.task('clean', del.bind(null, ['dist/*', '!dist/.git'], {dot: true}));
 
 // Watch files for changes & reload
-gulp.task('serve', ['styles'], function () {
-  
-  // connect.server({}, function (){
-    browserSync({
-      notify: false,
-      // Customize the BrowserSync console logging prefix
-      logPrefix: 'WSK',
-      // Run as an https by uncommenting 'https: true'
-      // Note: this uses an unsigned certificate which on first access
-      //       will present a certificate warning in the browser.
-      // https: true,
-      server: ['.tmp', 'app']
-    });
-  // });
+gulp.task('watch', ['styles'], function () {
 
-
-  gulp.watch(['app/**/*.html'], reload);
-  gulp.watch(['app/styles/**/*.{scss,css}'], ['styles', reload]);
+  gulp.watch(['app/**/*.html']);
+  gulp.watch(['app/scss/**/*.{scss,css}'], ['styles']);
   gulp.watch(['app/scripts/**/*.js'], ['jshint']);
-  gulp.watch(['app/images/**/*'], reload);
-});
+  gulp.watch(['app/images/**/*']);
 
-// Build and serve the output from the dist build
-gulp.task('serve:dist', ['default'], function () {
-  browserSync({
-    notify: false,
-    logPrefix: 'WSK',
-    // Run as an https by uncommenting 'https: true'
-    // Note: this uses an unsigned certificate which on first access
-    //       will present a certificate warning in the browser.
-    // https: true,
-    server: 'dist',
-    baseDir: 'dist'
-  });
 });
 
 // Build production files, the default task
