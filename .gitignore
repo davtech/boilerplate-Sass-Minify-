@@ -1,7 +1,5 @@
 node_modules
-app/scss
 dist
-.tmp
 app.yaml
 .DS_Store
 app/styles

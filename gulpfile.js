@@ -98,13 +98,12 @@ gulp.task('styles', function () {
     // 'app/scss/*.scss',
     // 'app/scss/**/*.scss'    
   ])
-    .pipe($.changed('.tmp/styles', {extension: '.css'}))
+    // .pipe($.changed('.tmp/styles', {extension: '.css'}))
     .pipe($.sourcemaps.init())
     .pipe($.sass({
       precision: 10
     }).on('error', $.sass.logError))
     .pipe($.autoprefixer(AUTOPREFIXER_BROWSERS))
-    // .pipe(rename('styles'))
     .pipe(gulp.dest('app/styles'))
     // Concatenate and minify styles
     .pipe($.if('*.css', $.csso()))
@@ -217,7 +216,7 @@ gulp.task('generate-service-worker', function (callback) {
       rootDir + '/fonts/**/*.woff',
       rootDir + '/images/**/*',
       rootDir + '/scripts/**/*.js',
-      rootDir + '/styles/**/*.css',
+      rootDir + '/styles/**/*',
       rootDir + '/*.{html,json}'
     ],
     // Translates a static file path to the relative URL that it's served from.
