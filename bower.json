@@ -1,0 +1,19 @@
+{
+  "name": "Boilerplate Sass-Minify",
+  "description": "Gerenciando dependencias do meu projeto",
+  "main": "",
+  "authors": [
+    "David Bastos <davtechh@gmail.com>"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/davtech/boilerplate-Sass-Minify-",
+  "moduleType": [],
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
